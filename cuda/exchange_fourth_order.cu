@@ -39,7 +39,8 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
 
     int i_;    // neighbor index
     float3 m_; // neighbor mag
-    float a__; // inter-cell exchange stiffness
+    float aSecondOrder__;  // second-order exchange stiffness
+    float aFourthOrder__;  // fourth-order exchange stiffness
 
 
     //////////////////
@@ -51,8 +52,8 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     aSecondOrder__  = aSecondOrderLUT2d[symidx(r0, regions[i_])];
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
     B              -= 4 * aSecondOrder__ * (1/(cx*cx) + 1/(cy*cy)) * m_;
-    B              -= 12 * aFourthOrder__ * (1/(cx*cx*cx*cx) + 1/(cy*cy*cy*cy));
-    B              -= 16 * aFourthOrder__ / (cx*cx*cy*cy)
+    B              -= 12 * aFourthOrder__ * (1/(cx*cx*cx*cx) + 1/(cy*cy*cy*cy)) * m_;
+    B              -= 16 * aFourthOrder__ / (cx*cx*cy*cy) * m_;
 
 
     ///////////////////////////////
@@ -66,8 +67,8 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     aSecondOrder__  = aSecondOrderLUT2d[symidx(r0, regions[i_])];
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
     B              += (2 * aSecondOrder__ / (cx*cx)) * m_;
-    B              += (8 * aFourthOrder__ / (cx*cx*cx*cx)) * m;
-    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              += (8 * aFourthOrder__ / (cx*cx*cx*cx)) * m_;
+    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
     // Right neighbour
     i_              = idx(hclampx(ix+1), iy, iz);                  // clamps or wraps index according to PBC
@@ -76,8 +77,8 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     aSecondOrder__  = aSecondOrderLUT2d[symidx(r0, regions[i_])];
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
     B              += (2 * aSecondOrder__ / (cx*cx)) * m_;
-    B              += (8 * aFourthOrder__ / (cx*cx*cx*cx)) * m;
-    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              += (8 * aFourthOrder__ / (cx*cx*cx*cx)) * m_;
+    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
     // Below neighbour
     i_              = idx(ix, lclampy(iy-1), iz);                  // clamps or wraps index according to PBC
@@ -86,8 +87,8 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     aSecondOrder__  = aSecondOrderLUT2d[symidx(r0, regions[i_])];
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
     B              += (2 * aSecondOrder__ / (cy*cy)) * m_;
-    B              += (8 * aFourthOrder__ / (cy*cy*cy*cy)) * m;
-    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              += (8 * aFourthOrder__ / (cy*cy*cy*cy)) * m_;
+    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
     // Above neighbour
     i_              = idx(ix, hclampy(iy+1), iz);                  // clamps or wraps index according to PBC
@@ -96,8 +97,8 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     aSecondOrder__  = aSecondOrderLUT2d[symidx(r0, regions[i_])];
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
     B              += (2 * aSecondOrder__ / (cy*cy)) * m_;
-    B              += (8 * aFourthOrder__ / (cy*cy*cy*cy)) * m;
-    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              += (8 * aFourthOrder__ / (cy*cy*cy*cy)) * m_;
+    B              += (8 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
 
     /////////////////////////////////
@@ -109,28 +110,28 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
     // Top-left neighbour
     i_              = idx(lclampx(ix-1), hclampy(iy+1), iz);       // clamps or wraps index according to PBC
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
     // Bottom-right neighbour
     i_              = idx(hclampx(ix+1), lclampy(iy-1), iz);       // clamps or wraps index according to PBC
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
     // Top-right neighbour
     i_              = idx(hclampx(ix+1), hclampy(iy+1), iz);       // clamps or wraps index according to PBC
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m;
+    B              -= (4 * aFourthOrder__ / (cx*cx*cy*cy)) * m_;
 
 
     ///////////////////////////////////////
@@ -142,28 +143,28 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (2 * aFourthOrder__ / (cx*cx*cx*cx)) * m;
+    B              -= (2 * aFourthOrder__ / (cx*cx*cx*cx)) * m_;
 
     // Two over to right
     i_              = idx(hclampx(ix+2), iy, iz);                  // clamps or wraps index according to PBC
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (2 * aFourthOrder__ / (cx*cx*cx*cx)) * m;
+    B              -= (2 * aFourthOrder__ / (cx*cx*cx*cx)) * m_;
 
     // Two below
     i_              = idx(ix, lclampy(iy-2), iz);                  // clamps or wraps index according to PBC
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (2 * aFourthOrder__ / (cy*cy*cy*cy)) * m;
+    B              -= (2 * aFourthOrder__ / (cy*cy*cy*cy)) * m_;
 
     // Two above
     i_              = idx(ix, hclampy(iy+2), iz);                  // clamps or wraps index according to PBC
     m_              = make_float3(mx[i_], my[i_], mz[i_]);         // load m
     m_              = ( is0(m_)? m0: m_ );                         // replace missing non-boundary neighbor
     aFourthOrder__  = aFourthOrderLUT2d[symidx(r0, regions[i_])];
-    B              -= (2 * aFourthOrder__ / (cy*cy*cy*cy)) * m;
+    B              -= (2 * aFourthOrder__ / (cy*cy*cy*cy)) * m_;
 
 
     float invMs = inv_Msat(Ms_, Ms_mul, I);
