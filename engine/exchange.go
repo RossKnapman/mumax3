@@ -17,10 +17,13 @@ var (
 	Aex        = NewScalarParam("Aex", "J/m", "Exchange stiffness", &lex2)
 	Dind       = NewScalarParam("Dind", "J/m2", "Interfacial Dzyaloshinskii-Moriya strength", &din2)
 	Dbulk      = NewScalarParam("Dbulk", "J/m2", "Bulk Dzyaloshinskii-Moriya strength", &dbulk2)
-	AexFourth  = NewScalarParam("AexFourth", "Jm", "Next-nearest neighbor exchange stiffnss", &lexfourth2)
+	I1         = NewScalarParam("I1", "J/m", "Exchange stiffness (from Lin2016a, should be -Aex)", &i1)
+	I2         = NewScalarParam("I2", "Jm", "Next-nearest neighbor exchange stiffness", &i2)
 	lex2       exchParam // inter-cell Aex
 	din2       exchParam // inter-cell Dind
 	dbulk2     exchParam // inter-cell Dbulk
+	i1         exchParam // inter-cell I1
+	i2         exchParam // inter-cell I2
 	lexfourth2 exchParam // inter-cell AexFourth
 
 	B_exch     = NewVectorField("B_exch", "T", "Exchange field", AddExchangeField)
@@ -46,29 +49,31 @@ func init() {
 	lex2.init(Aex)
 	din2.init(Dind)
 	dbulk2.init(Dbulk)
-	lexfourth2.init(AexFourth)
+	i1.init(I1)
+	i2.init(I2)
 }
 
 // Adds the current exchange field to dst
 func AddExchangeField(dst *data.Slice) {
 	inter := !Dind.isZero()
 	bulk := !Dbulk.isZero()
-	fourthOrder := !AexFourth.isZero()
+	hasI1 := !I1.isZero()
+	hasI2 := !I2.isZero()
 	ms := Msat.MSlice()
 	defer ms.Recycle()
 	switch {
-	case !inter && !bulk && !fourthOrder:
+	case !inter && !bulk && !hasI1 && !hasI2:
 		cuda.AddExchange(dst, M.Buffer(), lex2.Gpu(), ms, regions.Gpu(), M.Mesh())
-	case inter && !bulk && !fourthOrder:
+	case inter && !bulk && !hasI1 && !hasI2:
 		Refer("mulkers2017")
 		cuda.AddDMI(dst, M.Buffer(), lex2.Gpu(), din2.Gpu(), ms, regions.Gpu(), M.Mesh(), OpenBC) // dmi+exchange
-	case bulk && !inter && !fourthOrder:
+	case bulk && !inter && !hasI1 && !hasI2:
 		cuda.AddDMIBulk(dst, M.Buffer(), lex2.Gpu(), dbulk2.Gpu(), ms, regions.Gpu(), M.Mesh(), OpenBC) // dmi+exchange
 		// TODO: add ScaleInterDbulk and InterDbulk
-	case fourthOrder && !bulk && !inter:
+	case hasI1 || hasI2 && !bulk && !inter:
 		cuda.AddExchangeFourthOrder(dst, M.Buffer(), lex2.Gpu(), lexfourth2.Gpu(), ms, regions.Gpu(), M.Mesh())
-	case inter && bulk:
-		util.Fatal("Cannot have interfacial-induced DMI and bulk DMI at the same time")
+	default:
+		util.Fatal("Needs to have either Aex or I1 and/or I2, DMI cannot be with I1 and I2, also can only have one type of DMI")
 	}
 }
 

@@ -17,25 +17,25 @@ var addexchangefourthorder_code cu.Function
 
 // Stores the arguments for addexchangefourthorder kernel invocation
 type addexchangefourthorder_args_t struct {
-	arg_Bx                unsafe.Pointer
-	arg_By                unsafe.Pointer
-	arg_Bz                unsafe.Pointer
-	arg_mx                unsafe.Pointer
-	arg_my                unsafe.Pointer
-	arg_mz                unsafe.Pointer
-	arg_Ms_               unsafe.Pointer
-	arg_Ms_mul            float32
-	arg_aSecondOrderLUT2d unsafe.Pointer
-	arg_aFourthOrderLUT2d unsafe.Pointer
-	arg_regions           unsafe.Pointer
-	arg_cx                float32
-	arg_cy                float32
-	arg_cz                float32
-	arg_Nx                int
-	arg_Ny                int
-	arg_Nz                int
-	arg_PBC               byte
-	argptr                [18]unsafe.Pointer
+	arg_Bx      unsafe.Pointer
+	arg_By      unsafe.Pointer
+	arg_Bz      unsafe.Pointer
+	arg_mx      unsafe.Pointer
+	arg_my      unsafe.Pointer
+	arg_mz      unsafe.Pointer
+	arg_Ms_     unsafe.Pointer
+	arg_Ms_mul  float32
+	arg_I1      unsafe.Pointer
+	arg_I2      unsafe.Pointer
+	arg_regions unsafe.Pointer
+	arg_cx      float32
+	arg_cy      float32
+	arg_cz      float32
+	arg_Nx      int
+	arg_Ny      int
+	arg_Nz      int
+	arg_PBC     byte
+	argptr      [18]unsafe.Pointer
 	sync.Mutex
 }
 
@@ -52,8 +52,8 @@ func init() {
 	addexchangefourthorder_args.argptr[5] = unsafe.Pointer(&addexchangefourthorder_args.arg_mz)
 	addexchangefourthorder_args.argptr[6] = unsafe.Pointer(&addexchangefourthorder_args.arg_Ms_)
 	addexchangefourthorder_args.argptr[7] = unsafe.Pointer(&addexchangefourthorder_args.arg_Ms_mul)
-	addexchangefourthorder_args.argptr[8] = unsafe.Pointer(&addexchangefourthorder_args.arg_aSecondOrderLUT2d)
-	addexchangefourthorder_args.argptr[9] = unsafe.Pointer(&addexchangefourthorder_args.arg_aFourthOrderLUT2d)
+	addexchangefourthorder_args.argptr[8] = unsafe.Pointer(&addexchangefourthorder_args.arg_I1)
+	addexchangefourthorder_args.argptr[9] = unsafe.Pointer(&addexchangefourthorder_args.arg_I2)
 	addexchangefourthorder_args.argptr[10] = unsafe.Pointer(&addexchangefourthorder_args.arg_regions)
 	addexchangefourthorder_args.argptr[11] = unsafe.Pointer(&addexchangefourthorder_args.arg_cx)
 	addexchangefourthorder_args.argptr[12] = unsafe.Pointer(&addexchangefourthorder_args.arg_cy)
@@ -65,7 +65,7 @@ func init() {
 }
 
 // Wrapper for addexchangefourthorder CUDA kernel, asynchronous.
-func k_addexchangefourthorder_async(Bx unsafe.Pointer, By unsafe.Pointer, Bz unsafe.Pointer, mx unsafe.Pointer, my unsafe.Pointer, mz unsafe.Pointer, Ms_ unsafe.Pointer, Ms_mul float32, aSecondOrderLUT2d unsafe.Pointer, aFourthOrderLUT2d unsafe.Pointer, regions unsafe.Pointer, cx float32, cy float32, cz float32, Nx int, Ny int, Nz int, PBC byte, cfg *config) {
+func k_addexchangefourthorder_async(Bx unsafe.Pointer, By unsafe.Pointer, Bz unsafe.Pointer, mx unsafe.Pointer, my unsafe.Pointer, mz unsafe.Pointer, Ms_ unsafe.Pointer, Ms_mul float32, I1 unsafe.Pointer, I2 unsafe.Pointer, regions unsafe.Pointer, cx float32, cy float32, cz float32, Nx int, Ny int, Nz int, PBC byte, cfg *config) {
 	if Synchronous { // debug
 		Sync()
 		timer.Start("addexchangefourthorder")
@@ -86,8 +86,8 @@ func k_addexchangefourthorder_async(Bx unsafe.Pointer, By unsafe.Pointer, Bz uns
 	addexchangefourthorder_args.arg_mz = mz
 	addexchangefourthorder_args.arg_Ms_ = Ms_
 	addexchangefourthorder_args.arg_Ms_mul = Ms_mul
-	addexchangefourthorder_args.arg_aSecondOrderLUT2d = aSecondOrderLUT2d
-	addexchangefourthorder_args.arg_aFourthOrderLUT2d = aFourthOrderLUT2d
+	addexchangefourthorder_args.arg_I1 = I1
+	addexchangefourthorder_args.arg_I2 = I2
 	addexchangefourthorder_args.arg_regions = regions
 	addexchangefourthorder_args.arg_cx = cx
 	addexchangefourthorder_args.arg_cy = cy
