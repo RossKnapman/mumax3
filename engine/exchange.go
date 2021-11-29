@@ -14,17 +14,16 @@ import (
 )
 
 var (
-	Aex        = NewScalarParam("Aex", "J/m", "Exchange stiffness", &lex2)
-	Dind       = NewScalarParam("Dind", "J/m2", "Interfacial Dzyaloshinskii-Moriya strength", &din2)
-	Dbulk      = NewScalarParam("Dbulk", "J/m2", "Bulk Dzyaloshinskii-Moriya strength", &dbulk2)
-	I1         = NewScalarParam("I1", "J/m", "Exchange stiffness (from Lin2016a, should be -Aex)", &i1)
-	I2         = NewScalarParam("I2", "Jm", "Next-nearest neighbor exchange stiffness", &i2)
-	lex2       exchParam // inter-cell Aex
-	din2       exchParam // inter-cell Dind
-	dbulk2     exchParam // inter-cell Dbulk
-	i1         exchParam // inter-cell I1
-	i2         exchParam // inter-cell I2
-	lexfourth2 exchParam // inter-cell AexFourth
+	Aex    = NewScalarParam("Aex", "J/m", "Exchange stiffness", &lex2)
+	Dind   = NewScalarParam("Dind", "J/m2", "Interfacial Dzyaloshinskii-Moriya strength", &din2)
+	Dbulk  = NewScalarParam("Dbulk", "J/m2", "Bulk Dzyaloshinskii-Moriya strength", &dbulk2)
+	I1     = NewScalarParam("I1", "J/m", "Exchange stiffness (from Lin2016a, should be -Aex)", &i1)
+	I2     = NewScalarParam("I2", "Jm", "Next-nearest neighbor exchange stiffness", &i2)
+	lex2   exchParam // inter-cell Aex
+	din2   exchParam // inter-cell Dind
+	dbulk2 exchParam // inter-cell Dbulk
+	i1     exchParam // inter-cell I1
+	i2     exchParam // inter-cell I2
 
 	B_exch     = NewVectorField("B_exch", "T", "Exchange field", AddExchangeField)
 	E_exch     = NewScalarValue("E_exch", "J", "Total exchange energy (including the DMI energy)", GetExchangeEnergy)
@@ -71,7 +70,7 @@ func AddExchangeField(dst *data.Slice) {
 		cuda.AddDMIBulk(dst, M.Buffer(), lex2.Gpu(), dbulk2.Gpu(), ms, regions.Gpu(), M.Mesh(), OpenBC) // dmi+exchange
 		// TODO: add ScaleInterDbulk and InterDbulk
 	case hasI1 || hasI2 && !bulk && !inter:
-		cuda.AddExchangeFourthOrder(dst, M.Buffer(), lex2.Gpu(), lexfourth2.Gpu(), ms, regions.Gpu(), M.Mesh())
+		cuda.AddExchangeFourthOrder(dst, M.Buffer(), i1.Gpu(), i2.Gpu(), ms, regions.Gpu(), M.Mesh())
 	default:
 		util.Fatal("Needs to have either Aex or I1 and/or I2, DMI cannot be with I1 and I2, also can only have one type of DMI")
 	}
