@@ -51,7 +51,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                   // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= 4 * I1__ * (1/(cx*cx) + 1/(cy*cy)) * m_;
+    B    += 4 * I1__ * (1/(cx*cx) + 1/(cy*cy)) * m_;
     B    -= 12 * I2__ * (1/(cx*cx*cx*cx) + 1/(cy*cy*cy*cy)) * m_;
     B    -= 16 * I2__ / (cx*cx*cy*cy) * m_;
 
@@ -66,7 +66,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                  // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    += (2 * I1__ / (cx*cx)) * m_;
+    B    -= (2 * I1__ / (cx*cx)) * m_;
     B    += (8 * I2__ / (cx*cx*cx*cx)) * m_;
     B    += (8 * I2__ / (cx*cx*cy*cy)) * m_;
 
@@ -76,7 +76,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                  // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    += (2 * I1__ / (cx*cx)) * m_;
+    B    -= (2 * I1__ / (cx*cx)) * m_;
     B    += (8 * I2__ / (cx*cx*cx*cx)) * m_;
     B    += (8 * I2__ / (cx*cx*cy*cy)) * m_;
 
@@ -86,7 +86,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                  // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    += (2 * I1__ / (cy*cy)) * m_;
+    B    -= (2 * I1__ / (cy*cy)) * m_;
     B    += (8 * I2__ / (cy*cy*cy*cy)) * m_;
     B    += (8 * I2__ / (cx*cx*cy*cy)) * m_;
 
@@ -96,7 +96,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                  // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    += (2 * I1__ / (cy*cy)) * m_;
+    B    -= (2 * I1__ / (cy*cy)) * m_;
     B    += (8 * I2__ / (cy*cy*cy*cy)) * m_;
     B    += (8 * I2__ / (cx*cx*cy*cy)) * m_;
 
