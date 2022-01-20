@@ -6,10 +6,6 @@
 
 // See exchange_fourth_order.go for more details.
 
-///////////////////////////////////////////////////
-// Important note: Currently only works for Nz=1 //
-///////////////////////////////////////////////////
-
 extern "C" __global__ void
 addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __restrict__ Bz,
             float* __restrict__ mx, float* __restrict__ my, float* __restrict__ mz,
@@ -51,7 +47,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    += 4 * I1__ * (1/(cx*cx) + 1/(cy*cy) + 1/(cz*cz)) * m_;
+    B    += 2 * I1__ * (1/(cx*cx) + 1/(cy*cy) + 1/(cz*cz)) * m_;
     B    -= 6 * I2__ * (1/(cx*cx*cx*cx) + 1/(cy*cy*cy*cy) + 1/(cz*cz*cz*cz)) * m_;
     B    -= 8 * I2__ * (1/(cx*cx*cy*cy) + 1/(cx*cx*cz*cz) + 1/(cy*cy*cz*cz)) * m_;
 
@@ -66,7 +62,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= (2 * I1__ / (cx*cx)) * m_;
+    B    -= (I1__ / (cx*cx)) * m_;
     B    += 4 * I2__ * (1/(cx*cx*cx*cx) + 1/(cx*cx*cy*cy) + 1/(cx*cx*cz*cz)) * m_;
 
     // Right neighbour
@@ -75,7 +71,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= (2 * I1__ / (cx*cx)) * m_;
+    B    -= (I1__ / (cx*cx)) * m_;
     B    += 4 * I2__ * (1/(cx*cx*cx*cx) + 1/(cx*cx*cy*cy) + 1/(cx*cx*cz*cz)) * m_;
 
     // Below neighbour
@@ -84,7 +80,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= (2 * I1__ / (cy*cy)) * m_;
+    B    -= (I1__ / (cy*cy)) * m_;
     B    += 4 * I2__ * (1/(cy*cy*cy*cy) + 1/(cy*cy*cx*cx) + 1/(cy*cy*cz*cz)) * m_;
 
     // Above neighbour
@@ -93,7 +89,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= (2 * I1__ / (cy*cy)) * m_;
+    B    -= (I1__ / (cy*cy)) * m_;
     B    += 4 * I2__ * (1/(cy*cy*cy*cy) + 1/(cy*cy*cx*cx) + 1/(cy*cy*cz*cz)) * m_;
 
     // Bottom neighbour
@@ -102,7 +98,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= (2 * I1__ / (cz*cz)) * m_;
+    B    -= (I1__ / (cz*cz)) * m_;
     B    += 4 * I2__ * (1/(cz*cz*cz*cz) + 1/(cz*cz*cx*cx) + 1/(cz*cz*cy*cy)) * m_;
 
     // Top neighbour
@@ -111,7 +107,7 @@ addexchangefourthorder(float* __restrict__ Bx, float* __restrict__ By, float* __
     m_    = ( is0(m_)? m0: m_ );                                                    // replace missing non-boundary neighbor
     I1__  = I1[symidx(r0, regions[i_])];
     I2__  = I2[symidx(r0, regions[i_])];
-    B    -= (2 * I1__ / (cz*cz)) * m_;
+    B    -= (I1__ / (cz*cz)) * m_;
     B    += 4 * I2__ * (1/(cz*cz*cz*cz) + 1/(cz*cz*cx*cx) + 1/(cz*cz*cy*cy)) * m_;
 
 
