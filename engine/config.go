@@ -23,6 +23,7 @@ func init() {
 	DeclFunc("Helical", Helical, "Helical state for given wave vector")
 	DeclFunc("NeelSkyrmionInPlane", NeelSkyrmionInPlane, "Like the normal Neel skyrmion but combined over to be in-plane")
 	DeclFunc("NeelMeron", NeelMeron, "Half-skyrmion texture")
+	DeclFunc("SkyrmionArbitraryHelicity", SkyrmionArbitraryHelicity, "Skyrmion where the user specifies the helicity")
 	DeclFunc("Hopfion", Hopfion, "Hopfion texture of given Hopf index.")
 }
 
@@ -221,6 +222,21 @@ func NeelMeron(charge, pol, direction int) Config {
 			my := (y / math.Abs(y)) * float64(charge) * (1 - math.Abs(mz))
 			return noNaN(data.Vector{mx, my, mz}, pol)
 		}
+	}
+}
+
+func SkyrmionArbitraryHelicity(charge, pol int, eta float64) Config {
+	w := 8 * Mesh().CellSize()[X]
+	w2 := w * w
+	return func(x, y, z float64) data.Vector {
+		r2 := x*x + y*y
+		r := math.Sqrt(r2)
+		mz := 2 * float64(pol) * (math.Exp(-r2/w2) - 0.5)
+		mx := (x * float64(charge) / r) * (1 - math.Abs(mz))
+		my := (y * float64(charge) / r) * (1 - math.Abs(mz))
+		mxPrime := mx*math.Cos(eta) - my*math.Sin(eta)
+		myPrime := mx*math.Sin(eta) + my*math.Cos(eta)
+		return noNaN(data.Vector{mxPrime, myPrime, mz}, pol)
 	}
 }
 
