@@ -7,9 +7,6 @@ import (
 )
 
 // Add NNN exchange field to Beff.
-// 	m: normalized magnetization
-// 	B: effective field in Tesla
-// 	Aex_red: Aex / (Msat * 1e18 m2)
 // see exchange_fourth_order.cu
 func AddExchangeFourthOrder(B, m *data.Slice, I1_red SymmLUT, I2_red SymmLUT, Msat MSlice, regions *Bytes, mesh *data.Mesh) {
 	c := mesh.CellSize()
