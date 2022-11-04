@@ -6,15 +6,17 @@ import (
 )
 
 var (
-	Pe = NewScalarParam("Pe", "C/m2", "Electric polarization")
-	Ez = NewScalarParam("Ez", "V/m", "Electric field strength along the z-axis")
-	B_elec = NewVectorField("B_elec", "T", "Effective magnetic field due to electric field", AddElectricEffectiveField)
-	E_elec = NewScalarValue("E_elec", "J", "Electric field energy density", GetElectricFieldEnergy)
+	Ered = NewScalarParam("Ered", "J/m2", "Electric field (V/m) * Polarization (C/m2) * Lattice constant (m)", &ered)
+	ered exchParam
+
+	B_elec     = NewVectorField("B_elec", "T", "Effective magnetic field due to electric field", AddElectricEffectiveField)
+	E_elec     = NewScalarValue("E_elec", "J", "Electric field energy density", GetElectricFieldEnergy)
 	Edens_elec = NewScalarField("Edens_elec", "J/m3", "Total electric field energy density", AddElectricFieldEnergyDensity)
 )
 
-func init () {
+func init() {
 	registerEnergy(GetElectricFieldEnergy, AddElectricFieldEnergyDensity)
+	ered.init(Ered)
 }
 
 var AddElectricFieldEnergyDensity = makeEdensAdder(B_elec, -1)
@@ -22,11 +24,7 @@ var AddElectricFieldEnergyDensity = makeEdensAdder(B_elec, -1)
 func AddElectricEffectiveField(dst *data.Slice) {
 	ms := Msat.MSlice()
 	defer ms.Recycle()
-	e := Ez.MSlice()
-	defer e.Recycle()
-	pe := Pe.MSlice()
-	defer pe.Recycle()
-	cuda.AddElectric(dst, M.Buffer(), e, pe, ms, regions.Gpu(), M.Mesh())
+	cuda.AddElectric(dst, M.Buffer(), ered.Gpu(), ms, regions.Gpu(), M.Mesh())
 }
 
 func GetElectricFieldEnergy() float64 {

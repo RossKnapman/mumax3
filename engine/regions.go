@@ -67,9 +67,9 @@ func (r *Regions) render(f func(x, y, z float64) int) {
 		for iy := 0; iy < n[Y]; iy++ {
 			for ix := 0; ix < n[X]; ix++ {
 				r := Index2Coord(ix, iy, iz)
-				region := f(r[X], r[Y], r[Z])  // f is a function that returns the region, given the cell coordinates
+				region := f(r[X], r[Y], r[Z]) // f is a function that returns the region, given the cell coordinates
 				if region >= 0 {
-					arr[iz][iy][ix] = byte(region)  // Here, we get the region of the cell
+					arr[iz][iy][ix] = byte(region) // Here, we get the region of the cell
 				}
 			}
 		}
@@ -77,7 +77,6 @@ func (r *Regions) render(f func(x, y, z float64) int) {
 	//log.Print("regions.upload")
 	r.gpuCache.Upload(l)
 }
-
 
 func (r *Regions) clear(id int) {
 	n := Mesh().Size()

@@ -89,7 +89,7 @@ func Square(side float64) Shape {
 
 func Torus(R, r float64) Shape {
 	return func(x, y, z float64) bool {
-			return sqr64(math.Sqrt(sqr64(x) + sqr64(y)) - R) + sqr64(z) <= sqr64(r)
+		return sqr64(math.Sqrt(sqr64(x)+sqr64(y))-R)+sqr64(z) <= sqr64(r)
 	}
 }
 
