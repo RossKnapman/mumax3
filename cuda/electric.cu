@@ -79,7 +79,7 @@ addelectric(float* __restrict__ Bx, float* __restrict__ By, float* __restrict__ 
 
 
     float invMs = inv_Msat(Ms_, Ms_mul, I);
-    Bx[I] += B.x*invMs;
-    By[I] += B.y*invMs;
-    Bz[I] += B.z*invMs;
+    Bx[I] += 0.5*B.x*invMs;
+    By[I] += 0.5*B.y*invMs;
+    Bz[I] += 0.5*B.z*invMs;
 }
