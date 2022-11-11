@@ -19,7 +19,7 @@ func init() {
 	ered.init(Ered)
 }
 
-var AddElectricFieldEnergyDensity = makeEdensAdder(B_elec, -1)
+var AddElectricFieldEnergyDensity = makeEdensAdder(B_elec, -0.5)
 
 func AddElectricEffectiveField(dst *data.Slice) {
 	ms := Msat.MSlice()
@@ -28,5 +28,5 @@ func AddElectricEffectiveField(dst *data.Slice) {
 }
 
 func GetElectricFieldEnergy() float64 {
-	return -1 * cellVolume() * dot(&M_full, &B_elec)
+	return -0.5 * cellVolume() * dot(&M_full, &B_elec)
 }
