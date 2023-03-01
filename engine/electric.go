@@ -22,6 +22,10 @@ func init() {
 var AddElectricFieldEnergyDensity = makeEdensAdder(B_elec, -0.5)
 
 func AddElectricEffectiveField(dst *data.Slice) {
+	
+	// Force an update if time-varying
+	Ered.lut.source.update()
+
 	ms := Msat.MSlice()
 	defer ms.Recycle()
 	cuda.AddElectric(dst, M.Buffer(), ered.Gpu(), ms, regions.Gpu(), M.Mesh())
